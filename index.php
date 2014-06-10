@@ -238,6 +238,23 @@ $link = $CFG->wwwroot.'/report/ilbenrol/?course='.$course->id;
 if (strlen($sort)) {
     $link .= '&amp;sort='.$sort;
 }
+
+// Add filterform fields
+
+if ($formdata) {
+    $formvar = '';
+    foreach ($formdata as $key=>$value) {
+        if (is_array($value)) {
+            foreach ($value as $k=>$v) {
+                $formvar .= "&{$key}[{$k}]={$v}";
+            }
+        } else {
+            $formvar .= "&{$key}={$value}";
+        }
+    }
+    $link .= $formvar;
+}
+
 $link .= '&amp;start=';
 
 // Build the the page by Initial bar
