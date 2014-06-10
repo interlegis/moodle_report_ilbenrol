@@ -36,7 +36,7 @@ class filter_form extends moodleform {
     protected $_courseid;
     protected $_filterfields;
 
-    function filter_form($courseid, $filterfields, $action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true) {
+    function filter_form($courseid, $filterfields, $action=null, $customdata=null, $method='get', $target='', $attributes=null, $editable=true) {
         $this->_filterfields = $filterfields;
         $this->_courseid = $courseid;
         parent::moodleform($action, $customdata, $method, $target, $attributes, $editable);
