@@ -92,10 +92,20 @@ if ($group===0 && $course->groupmode==SEPARATEGROUPS) {
 
 // Get data for user filtering
 $manager = new course_enrolment_manager($PAGE, $course);
-$roles = $manager->get_all_roles();
 $mform = new filter_form($course->id, $filterfields);
 $instances = $manager->get_enrolment_instances();
 $contextids = $context->get_parent_context_ids(true);
+
+// Roles
+$allroles = $manager->get_all_roles();
+$role_confirmed = get_config(null, 'report_ilbenrol_confirmed');
+$role_revoked   = get_config(null, 'report_ilbenrol_revoked');
+
+if (!$role_confirmed or !$role_revoked) {
+    print_error('invalidargorconf');
+}
+
+$roles = array($role_confirmed=>$allroles[$role_confirmed], $role_revoked=>$allroles[$role_revoked]);
 
 // Generate where clause
 $where = array();
@@ -414,7 +424,7 @@ foreach($userlist as $user) {
     $user_roles = $manager->get_user_roles($user->id);
     $display_roles = array();
     foreach ($user_roles as $rid=>$rassignable) {
-        $display_roles[] = $roles[$rid]->localname;
+        $display_roles[] = $allroles[$rid]->localname;
     }
     $display_roles = implode(', ', $display_roles);
 
