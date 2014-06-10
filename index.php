@@ -242,7 +242,7 @@ if (strlen($sort)) {
 // Add filterform fields
 
 if ($formdata) {
-    $formvar = '';
+    $formvar = '&_qf__filter_form=1&mform_isexpanded_id_filter=1&sesskey='.sesskey();
     foreach ($formdata as $key=>$value) {
         if (is_array($value)) {
             foreach ($value as $k=>$v) {
