@@ -171,7 +171,7 @@ if ($sort == 'timecreated') {
 }
 
 $total = $DB->count_records_sql($sql, $params + $where_params);
-$userlist = $DB->get_records_sql($sql, $params + $where_params, $start);
+$userlist = $DB->get_records_sql($sql, $params + $where_params, $start, ILBENROL_REPORT_PAGE);
  
 if ($csv && $userlist) { // Only show CSV if there are some users
     $shortname = format_string($course->shortname, true, array('context' => $context));
