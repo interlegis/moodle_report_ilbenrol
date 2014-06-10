@@ -160,8 +160,8 @@ if ($sort == 'timecreated') {
     $sql .= " ORDER BY u.{$sort}";
 }
 
-$userlist = $DB->get_records_sql($sql, $params + $where_params);
-$total = count($userlist);
+$total = $DB->count_records_sql($sql, $params + $where_params);
+$userlist = $DB->get_records_sql($sql, $params + $where_params, $start);
  
 if ($csv && $userlist) { // Only show CSV if there are some users
     $shortname = format_string($course->shortname, true, array('context' => $context));
