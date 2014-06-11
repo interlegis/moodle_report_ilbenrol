@@ -35,10 +35,12 @@ require_once("$CFG->libdir/formslib.php");
 class filter_form extends moodleform {
     protected $_courseid;
     protected $_filterfields;
+    protected $_roles;
 
-    function filter_form($courseid, $filterfields, $action=null, $customdata=null, $method='get', $target='', $attributes=null, $editable=true) {
+    function filter_form($courseid, $filterfields, $roles, $action=null, $customdata=null, $method='get', $target='', $attributes=null, $editable=true) {
         $this->_filterfields = $filterfields;
-        $this->_courseid = $courseid;
+        $this->_courseid     = $courseid;
+        $this->_roles        = $roles;
         parent::moodleform($action, $customdata, $method, $target, $attributes, $editable);
     }
 
@@ -48,8 +50,13 @@ class filter_form extends moodleform {
         $mform        = $this->_form; // Don't forget the underscore!
         $courseid     = $this->_courseid;
         $filterfields = $this->_filterfields;
+        $roles        = $this->_roles;
 
-//        $mform->addElement('header', 'filter', get_string('filter', 'report_ilbenrol'));
+        // Role filter
+        $mform->addElement('header', 'filter', get_string('roles'));
+        foreach ($roles as $role) {
+            $mform->addElement('checkbox', "role[{$role->id}]", $role->localname);
+        }
 
         foreach ($filterfields as $field) {
             $mform->addElement('header', $field->shortname, $field->name);

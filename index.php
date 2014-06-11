@@ -92,7 +92,6 @@ if ($group===0 && $course->groupmode==SEPARATEGROUPS) {
 
 // Get data for user filtering
 $manager = new course_enrolment_manager($PAGE, $course);
-$mform = new filter_form($course->id, $filterfields);
 $instances = $manager->get_enrolment_instances();
 $contextids = $context->get_parent_context_ids(true);
 
@@ -106,6 +105,7 @@ if (!$role_confirmed or !$role_revoked) {
 }
 
 $roles = array($role_confirmed=>$allroles[$role_confirmed], $role_revoked=>$allroles[$role_revoked]);
+$mform = new filter_form($course->id, $filterfields, $roles);
 
 // Generate where clause
 $where = array();
@@ -133,6 +133,16 @@ if ($formdata = $mform->get_data()) {
         }
     }
 }
+
+// Role filter
+if (array_key_exists('role', $formdata)) {
+    list($in_roles, $param_roles) = $DB->get_in_or_equal(array_keys($formdata->role), SQL_PARAMS_NAMED);
+} else {
+    list($in_roles, $param_roles) = $DB->get_in_or_equal(array_keys($roles), SQL_PARAMS_NAMED);
+}
+
+$where[] = "ra.roleid {$in_roles}";
+$where_params = $where_params + $param_roles;
 
 list($in_instances, $param_instances) = $DB->get_in_or_equal(array_keys($instances), SQL_PARAMS_NAMED);
 list($in_contexts, $param_contexts) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
@@ -361,7 +371,7 @@ if ($total > ILBENROL_REPORT_PAGE) {
 // Start of table
 if (!$csv) {
     print '<br/>'; // ugh
-
+    echo $OUTPUT->box_start();
     print $pagingbar;
 
     if (!$total) {
@@ -486,32 +496,30 @@ print '</div>';
 print $pagingbar;
 
 // Bulk operations
-if (!$csv) {
-    echo '<br /><div class="buttons">';
-    echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> ';
-    echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> ';
-    echo '</form>';
-    $module = array('name'=>'core_user', 'fullpath'=>'/user/module.js');
-    $PAGE->requires->js_init_call('M.core_user.init_participation', null, false, $module);
-    $displaylist = array();
-    $displaylist['confirmenrol'] = get_string('confirmenrol', 'report_ilbenrol');
-    $displaylist['revokeenrol'] = get_string('revokeenrol', 'report_ilbenrol');
-    echo $OUTPUT->help_icon('withselectedusers', 'report_ilbenrol');
-    echo html_writer::tag('label', get_string("withselectedusers"), array('for'=>'formactionid'));
-    echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots'), array('id'=>'formactionid'));
-    echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-    echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
-    echo '<noscript style="display:inline">';
-    echo '<div><input type="submit" value="'.get_string('ok').'" /></div>';
-    echo '</noscript>';
-
-}
+echo '<br /><div class="buttons">';
+echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> ';
+echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> ';
+echo '</form>';
+$module = array('name'=>'core_user', 'fullpath'=>'/user/module.js');
+$PAGE->requires->js_init_call('M.core_user.init_participation', null, false, $module);
+$displaylist = array();
+$displaylist['confirmenrol'] = get_string('confirmenrol', 'report_ilbenrol');
+$displaylist['revokeenrol'] = get_string('revokeenrol', 'report_ilbenrol');
+echo $OUTPUT->help_icon('withselectedusers', 'report_ilbenrol');
+echo html_writer::tag('label', get_string("withselectedusers"), array('for'=>'formactionid'));
+echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots'), array('id'=>'formactionid'));
+echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
+echo '<noscript style="display:inline">';
+echo '<div><input type="submit" value="'.get_string('ok').'" /></div>';
+echo '</noscript>';
 
 print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
     '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li>
     <li><a href="index.php?course='.$course->id.'&amp;format=excelcsv">'.
     get_string('excelcsvdownload','completion').'</a></li></ul>';
 
+echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
 
