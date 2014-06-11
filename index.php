@@ -170,7 +170,9 @@ if ($sort == 'timecreated') {
     $sql .= " ORDER BY u.{$sort}";
 }
 
-$total = $DB->count_records_sql($sql, $params + $where_params);
+$sql_count = ereg_replace('SELECT(.*)FROM', 'SELECT COUNT(DISTINCT u.id) FROM', $sql);
+$sql_count = ereg_replace('ORDER BY(.*)','',$sql_count);
+$total = $DB->count_records_sql($sql_count, $params + $where_params);
 $userlist = $DB->get_records_sql($sql, $params + $where_params, $start, ILBENROL_REPORT_PAGE);
  
 if ($csv && $userlist) { // Only show CSV if there are some users
