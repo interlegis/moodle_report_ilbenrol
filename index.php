@@ -499,7 +499,6 @@ print $pagingbar;
 echo '<br /><div class="buttons">';
 echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> ';
 echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> ';
-echo '</form>';
 $module = array('name'=>'core_user', 'fullpath'=>'/user/module.js');
 $PAGE->requires->js_init_call('M.core_user.init_participation', null, false, $module);
 $displaylist = array();
@@ -514,6 +513,8 @@ echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'"
 echo '<noscript style="display:inline">';
 echo '<div><input type="submit" value="'.get_string('ok').'" /></div>';
 echo '</noscript>';
+echo '</div>';
+echo '</form>';
 
 print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
     '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li>
