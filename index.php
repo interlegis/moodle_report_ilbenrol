@@ -516,10 +516,13 @@ echo '</noscript>';
 echo '</div>';
 echo '</form>';
 
-print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
-    '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li>
-    <li><a href="index.php?course='.$course->id.'&amp;format=excelcsv">'.
-    get_string('excelcsvdownload','completion').'</a></li></ul>';
+print '<ul class="progress-actions">
+         <li><a href="index.php?course='.$course->id.'&amp;format=csv">'.
+                get_string('csvdownload','completion').'</a></li>
+         <li><a href="index.php?course='.$course->id.'&amp;format=excelcsv">'.
+                get_string('excelcsvdownload','completion').'</a></li>
+         <li><a href="suspend.php?course='.$course->id.'&amp;sesskey='.sesskey().'">'.
+                get_string('suspendrevoked', 'report_ilbenrol').'</a></li></ul>';
 
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();
