@@ -202,9 +202,15 @@ if ($csv && $userlist) { // Only show CSV if there are some users
     groups_print_course_menu($course,$CFG->wwwroot.'/report/ilbenrol/?course='.$course->id);
 
     // Print filter form
+    echo $OUTPUT->box_start();
+    echo '<strong>'.get_string('filter', 'report_ilbenrol').'</strong>';
     $mform->display();
+    echo $OUTPUT->box_end();
+    echo '<br/>';
 
     // Print summary table
+    echo $OUTPUT->box_start();
+    echo '<strong>'.get_string('summary', 'report_ilbenrol').'</strong>';
     $thead = array('');
     $talign = array('left');
     foreach ($roles as $role) {
@@ -236,6 +242,8 @@ if ($csv && $userlist) { // Only show CSV if there are some users
 
         echo html_writer::table($table);
     }
+    echo $OUTPUT->box_end();
+    echo '<br/>';
 }
 
 // If no users in this filter
@@ -352,7 +360,7 @@ if ($total > ILBENROL_REPORT_PAGE) {
 
 // Start of table
 if (!$csv) {
-    print '<br class="clearer"/>'; // ugh
+    print '<br/>'; // ugh
 
     print $pagingbar;
 

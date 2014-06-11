@@ -26,6 +26,7 @@
 $string['pluginname'] = 'Confirmação de matrícula ILB';
 $string['title'] = 'Relatório de confirmação de matrícula';
 $string['filter'] = 'Filtros';
+$string['summary'] = 'Sumários';
 $string['filterfields'] = 'Campos de filtragem';
 $string['userroles'] = 'Funções';
 $string['confirmed'] = 'Função para matrícula confirmada';

@@ -26,6 +26,7 @@
 $string['pluginname'] = 'ILB Enrol Confirmation';
 $string['title'] = 'ILB Enrol Confirmation Report';
 $string['filter'] = 'Filters';
+$string['summary'] = 'Summaries';
 $string['filterfields'] = 'Filter fields';
 $string['userroles'] = 'User roles';
 $string['confirmed'] = 'Role to confirmed enrollment';

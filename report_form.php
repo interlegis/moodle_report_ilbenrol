@@ -49,10 +49,10 @@ class filter_form extends moodleform {
         $courseid     = $this->_courseid;
         $filterfields = $this->_filterfields;
 
-        $mform->addElement('header', 'filter', get_string('filter', 'report_ilbenrol'));
+//        $mform->addElement('header', 'filter', get_string('filter', 'report_ilbenrol'));
 
         foreach ($filterfields as $field) {
-            $mform->addElement('static', $field->shortname, $field->name, '');
+            $mform->addElement('header', $field->shortname, $field->name);
             $options = explode("\n", $field->param1);
             foreach ($options as $option) {
                 $mform->addElement('checkbox', "{$field->shortname}[$option]", $option);
@@ -61,5 +61,6 @@ class filter_form extends moodleform {
 
         $mform->addElement('submit', 'filterbutton', get_string('applyfilter', 'report_ilbenrol'));
         $mform->addElement('hidden', 'course', $courseid);
+        $mform->closeHeaderBefore('filterbutton');
     }
 }
