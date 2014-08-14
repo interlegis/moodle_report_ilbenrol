@@ -52,6 +52,9 @@ class filter_form extends moodleform {
         $filterfields = $this->_filterfields;
         $roles        = $this->_roles;
 
+        // User fields filter
+        $mform->addElement('text', 'email', get_string('email'));
+
         // Role filter
         $mform->addElement('header', 'filter', get_string('roles'));
         foreach ($roles as $role) {

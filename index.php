@@ -132,10 +132,16 @@ if ($formdata = $mform->get_data()) {
             $where_params = $where_params + $param_options;
         }
     }
+
+    // Email filter
+    if (array_key_exists('email', $formdata)) {
+        $email_like = $DB->sql_like('u.email', "'%{$formdata->email}%'", false);
+        $whereors[] = "($email_like)";
+    }
 }
 
 // Role filter
-if (array_key_exists('role', $formdata)) {
+if ($formdata and array_key_exists('role', $formdata)) {
     list($in_roles, $param_roles) = $DB->get_in_or_equal(array_keys($formdata->role), SQL_PARAMS_NAMED);
 } else {
     list($in_roles, $param_roles) = $DB->get_in_or_equal(array_keys($roles), SQL_PARAMS_NAMED);
