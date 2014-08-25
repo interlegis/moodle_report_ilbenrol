@@ -134,7 +134,7 @@ if ($formdata = $mform->get_data()) {
     }
 
     // Email filter
-    if (array_key_exists('email', $formdata)) {
+    if (array_key_exists('email', $formdata) and !empty($formdata->email)) {
         $email_like = $DB->sql_like('u.email', "'%{$formdata->email}%'", false);
         $whereors[] = "($email_like)";
     }
