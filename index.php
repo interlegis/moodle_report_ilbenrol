@@ -180,7 +180,12 @@ $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.email, ue.timecreated
 FROM {user} u
   JOIN {user_enrolments} ue ON (ue.userid = u.id AND ue.enrolid {$in_instances})
   JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid {$in_contexts})
-  LEFT JOIN {user_info_data} uid ON (uid.userid = u.id AND uid.fieldid {$in_fields})";
+  LEFT OUTER JOIN {user_info_data} uid ON (uid.userid = u.id AND uid.fieldid {$in_fields})";
+
+$sql_role_summary = ereg_replace('SELECT(.*)FROM', 'SELECT ra.roleid, count(distinct ue.id) FROM', $sql);
+$sql_role_summary .= ' GROUP BY ra.roleid';
+
+$dados_role_summary = $DB->get_records_sql($sql_role_summary, $params);
 
 if ($wherestr) {
     $sql .= " WHERE {$wherestr}";
@@ -230,9 +235,24 @@ if ($csv && $userlist) { // Only show CSV if there are some users
     echo $OUTPUT->box_end();
     echo '<br/>';
 
-    // Print summary table
+    // Print summary tables
     echo $OUTPUT->box_start();
     echo '<strong>'.get_string('summary', 'report_ilbenrol').'</strong>';
+
+    // Role summary table
+    $data = array();
+    foreach ($dados_role_summary as $role_count) {
+        $role = $allroles[$role_count->roleid];
+        $data[] = array($role->localname, $role_count->count);
+    }
+    $table = new html_table();
+    $table->align = array('left', 'right');
+    $table->head = array(get_string('roles'), get_string('total'));
+    $table->data = $data;
+    
+    echo html_writer::table($table);
+
+    // Print filtered summaries
     $thead = array('');
     $talign = array('left');
     foreach ($roles as $role) {
