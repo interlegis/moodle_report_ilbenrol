@@ -36,11 +36,13 @@ class filter_form extends moodleform {
     protected $_courseid;
     protected $_filterfields;
     protected $_roles;
+    protected $_instances;
 
-    function filter_form($courseid, $filterfields, $roles, $action=null, $customdata=null, $method='get', $target='', $attributes=null, $editable=true) {
+    function filter_form($courseid, $filterfields, $roles, $instances, $action=null, $customdata=null, $method='get', $target='', $attributes=null, $editable=true) {
         $this->_filterfields = $filterfields;
         $this->_courseid     = $courseid;
         $this->_roles        = $roles;
+        $this->_instances    = $instances;
         parent::moodleform($action, $customdata, $method, $target, $attributes, $editable);
     }
 
@@ -51,6 +53,8 @@ class filter_form extends moodleform {
         $courseid     = $this->_courseid;
         $filterfields = $this->_filterfields;
         $roles        = $this->_roles;
+        $instances    = $this->_instances;
+        $plugins      = enrol_get_plugins(false);
 
         // User fields filter
         $mform->addElement('text', 'email', get_string('email'));
@@ -61,6 +65,14 @@ class filter_form extends moodleform {
             $mform->addElement('checkbox', "role[{$role->id}]", $role->localname);
         }
 
+        // Role instance filter
+        $mform->addElement('header', 'filter', get_string('enrolmentinstances', 'enrol'));
+        foreach ($instances as $instance) {
+            $plugin = $plugins[$instance->enrol];
+            $mform->addElement('checkbox', "instance[{$instance->id}]", $plugin->get_instance_name($instance));
+        }
+
+        // User fields
         foreach ($filterfields as $field) {
             $mform->addElement('header', $field->shortname, $field->name);
             $options = explode("\n", $field->param1);

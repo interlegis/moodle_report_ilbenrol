@@ -105,7 +105,7 @@ if (!$role_confirmed or !$role_revoked) {
 }
 
 $roles = array($role_confirmed=>$allroles[$role_confirmed], $role_revoked=>$allroles[$role_revoked]);
-$mform = new filter_form($course->id, $filterfields, $roles);
+$mform = new filter_form($course->id, $filterfields, $roles, $instances);
 
 // Generate where clause
 $where = array();
@@ -141,7 +141,7 @@ if ($formdata = $mform->get_data()) {
 }
 
 // Role filter
-if ($formdata and array_key_exists('role', $formdata)) {
+if (array_key_exists('role', $formdata)) {
     list($in_roles, $param_roles) = $DB->get_in_or_equal(array_keys($formdata->role), SQL_PARAMS_NAMED);
 } else {
     list($in_roles, $param_roles) = $DB->get_in_or_equal(array_keys($roles), SQL_PARAMS_NAMED);
@@ -150,7 +150,13 @@ if ($formdata and array_key_exists('role', $formdata)) {
 $where[] = "ra.roleid {$in_roles}";
 $where_params = $where_params + $param_roles;
 
-list($in_instances, $param_instances) = $DB->get_in_or_equal(array_keys($instances), SQL_PARAMS_NAMED);
+// Enrol instance filter
+if (array_key_exists('instance', $formdata)) {
+    list($in_instances, $param_instances) = $DB->get_in_or_equal(array_keys($formdata->instance), SQL_PARAMS_NAMED);
+} else {
+    list($in_instances, $param_instances) = $DB->get_in_or_equal(array_keys($instances), SQL_PARAMS_NAMED);
+}
+
 list($in_contexts, $param_contexts) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED);
 list($in_fields, $param_fields) = $DB->get_in_or_equal(array_keys($filterfields), SQL_PARAMS_NAMED);
 $params = $param_instances + $param_contexts + $param_fields;
