@@ -182,8 +182,20 @@ FROM {user} u
   JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid {$in_contexts})
   LEFT OUTER JOIN {user_info_data} uid ON (uid.userid = u.id AND uid.fieldid {$in_fields})";
 
-$sql_role_summary = ereg_replace('SELECT(.*)FROM', 'SELECT ra.roleid, count(distinct ue.id) FROM', $sql);
+/*
+$sql_role_summary = preg_replace("/SELECT(.*)FROM/", 'SELECT ra.roleid, count(distinct ue.id) FROM', $sql);
+echo $sql_role_summary;
+mtrace($sql_role_summary);
 $sql_role_summary .= ' GROUP BY ra.roleid';
+*/
+
+$sql_role_summary = "
+    SELECT ra.roleid, count(distinct ue.id)
+    FROM {user} u
+    JOIN {user_enrolments} ue ON (ue.userid = u.id AND ue.enrolid {$in_instances})
+    JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid {$in_contexts})
+    LEFT OUTER JOIN {user_info_data} uid ON (uid.userid = u.id AND uid.fieldid {$in_fields})
+    GROUP BY ra.roleid";
 
 $dados_role_summary = $DB->get_records_sql($sql_role_summary, $params);
 
@@ -197,8 +209,13 @@ if ($sort == 'timecreated') {
     $sql .= " ORDER BY u.{$sort}";
 }
 
-$sql_count = ereg_replace('SELECT(.*)FROM', 'SELECT COUNT(DISTINCT u.id) FROM', $sql);
-$sql_count = ereg_replace('ORDER BY(.*)','',$sql_count);
+$sql_count = "
+    SELECT count(distinct u.id)
+    FROM {user} u
+    JOIN {user_enrolments} ue ON (ue.userid = u.id AND ue.enrolid {$in_instances})
+    JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid {$in_contexts})
+    LEFT OUTER JOIN {user_info_data} uid ON (uid.userid = u.id AND uid.fieldid {$in_fields})";
+
 $total = $DB->count_records_sql($sql_count, $params + $where_params);
 $userlist = $DB->get_records_sql($sql, $params + $where_params, $start, ILBENROL_REPORT_PAGE);
  
@@ -532,7 +549,7 @@ echo '<br /><div class="buttons">';
 echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> ';
 echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> ';
 $module = array('name'=>'core_user', 'fullpath'=>'/user/module.js');
-$PAGE->requires->js_init_call('M.core_user.init_participation', null, false, $module);
+//$PAGE->requires->js_init_call('M.core_user.init_participation', null, false, $module);
 $displaylist = array();
 $displaylist['confirmenrol'] = get_string('confirmenrol', 'report_ilbenrol');
 $displaylist['revokeenrol'] = get_string('revokeenrol', 'report_ilbenrol');
@@ -542,9 +559,9 @@ echo html_writer::select($displaylist, 'formaction', '', array(''=>'choosedots')
 echo '<input type="hidden" name="id" value="'.$course->id.'" />';
 echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
 echo '<input type="hidden" name="returnto" value="'.s($PAGE->url->out(false)).'" />';
-echo '<noscript style="display:inline">';
-echo '<div><input type="submit" value="'.get_string('ok').'" /></div>';
-echo '</noscript>';
+//echo '<noscript style="display:inline">';
+echo '&nbsp;&nbsp;<input type="submit" value="'.get_string('ok').'" />';
+//echo '</noscript>';
 echo '</div>';
 echo '</form>';
 
